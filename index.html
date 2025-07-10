@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radio Nagiz</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kufam:wght@400;700&family=Uncial+Antiqua&display=swap" rel="stylesheet">
+    
+    <!-- HLS.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+    <!-- === CSS Code === -->
+    <style>
+        body {
+            background-color: #3d3732;
+            font-family: 'Kufam', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .radio-container { text-align: center; }
+
+        /* --- Gradient Text Styling for most text --- */
+        h1, .station-btn, #status-display, label, footer p, #stop-btn {
+            background: linear-gradient(45deg, #FFD700, #F39C12, #BF5700);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: #FFD700; /* Fallback */
+        }
+
+        /* --- Title Styling --- */
+        h1 {
+            font-family: 'Uncial Antiqua', cursive;
+            font-weight: normal;
+            font-size: 3.5rem;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+            margin-bottom: 25px;
+            line-height: 1;
+        }
+        .large-z {
+            font-size: 200%;
+            display: inline-block;
+            vertical-align: -0.25em;
+            margin: 0 -0.1em;
+        }
+
+        /* --- The NEW Turquoise 'Z' Styling --- */
+        .turquoise-z {
+            color: #40E0D0; /* Turquoise color */
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.6); /* Give it its own shadow to pop */
+            /* Override the parent's gradient effect */
+            background: none;
+            -webkit-background-clip: initial;
+            background-clip: initial;
+            -webkit-text-fill-color: initial; /* This is key to let the color show */
+        }
+        
+        .radio-body {
+            width: 500px; max-width: 95vw;
+            background: linear-gradient(145deg, #8c5a2b, #593a1a);
+            border: 5px solid #4a2f1a; border-radius: 20px;
+            padding: 25px;
+            box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(0,0,0,0.4);
+        }
+        .top-panel {
+            background-color: #4a2f1a; border-radius: 10px;
+            padding: 20px; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+            margin-bottom: 25px;
+        }
+        .station-selectors { display: flex; justify-content: center; gap: 30px; }
+        .station-btn {
+            background-color: #f0e6d2; border: 4px solid #593a1a;
+            border-radius: 50%; width: 100px; height: 100px;
+            font-size: 1.1rem; font-family: 'Kufam', sans-serif;
+            font-weight: bold; cursor: pointer;
+            transition: all 0.2s ease; box-shadow: 2px 2px 8px rgba(0,0,0,0.6);
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            text-align: center; line-height: 1.2;
+        }
+        .station-btn:hover { background-color: #fff; transform: translateY(-2px); }
+        .station-btn.active {
+            background-color: #f0e6d2; border-color: #f39c12;
+            box-shadow: 0 0 15px #f39c12, inset 0 0 10px rgba(0,0,0,0.4);
+        }
+        #status-display {
+            margin-top: 15px; font-size: 1rem;
+            font-weight: bold; height: 20px;
+        }
+        .controls {
+            display: flex; justify-content: space-around;
+            align-items: center; background-color: #4a2f1a;
+            padding: 15px; border-radius: 10px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        }
+        #stop-btn {
+            background-color: #c0392b; border: 2px solid #552211;
+            border-radius: 8px; padding: 10px 20px;
+            font-size: 1rem; font-family: 'Kufam', sans-serif;
+            font-weight: bold; cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        #stop-btn:hover { background-color: #e74c3c; }
+        .control-group { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        label { font-size: 1rem; font-weight: bold;}
+        .classic-slider {
+            -webkit-appearance: none; appearance: none;
+            width: 180px; height: 10px;
+            background: #c8b496; border-radius: 5px;
+            outline: none;
+        }
+        .classic-slider::-webkit-slider-thumb {
+            -webkit-appearance: none; appearance: none;
+            width: 25px; height: 25px;
+            background: #f0e6d2; border-radius: 50%;
+            border: 2px solid #593a1a; cursor: pointer;
+        }
+        
+        /* --- Footer Styling --- */
+        footer { margin-top: 40px; text-align: center; font-size: 18px; }
+        footer p { margin: 5px 0; font-weight: bold; }
+        .footer-brand { font-family: 'Uncial Antiqua', cursive; font-size: 1.3em; letter-spacing: 2px; }
+        .temple-icon { font-size: 1.1em; vertical-align: -0.1em; margin-left: 8px; }
+    </style>
+</head>
+<body>
+
+    <div class="radio-container">
+        <!-- Title with Turquoise Z -->
+        <h1>Radio Nagi<span class="large-z turquoise-z">z</span></h1>
+        
+        <div class="radio-body">
+            <div class="top-panel" dir="rtl">
+                <div class="station-selectors">
+                    <button id="aljazeera-btn" class="station-btn">راديو<br>الجزيرة</button>
+                    <button id="quran-btn" class="station-btn">القرآن الكريم<br>(القاهرة)</button>
+                </div>
+                <div id="status-display">اختر محطة للبدء</div>
+            </div>
+            <div class="controls" dir="rtl">
+                <button id="stop-btn">إيقاف</button>
+                <div class="control-group">
+                    <label for="volume-slider">الصوت</label>
+                    <input type="range" id="volume-slider" class="classic-slider" min="0" max="1" step="0.01" value="0.8">
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer with Turquoise Z -->
+    <footer>
+        <p>Nagi<span class="turquoise-z">z</span> Smart Solution<span class="temple-icon">🏛️</span></p>
+        <p class="footer-brand">Nss - 2025 &copy;</p>
+    </footer>
+
+    <audio id="audio-player" style="display:none;"></audio>
+
+    <!-- === JavaScript Code (No changes needed) === -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const audioPlayer = document.getElementById('audio-player');
+            const aljazeeraBtn = document.getElementById('aljazeera-btn');
+            const quranBtn = document.getElementById('quran-btn');
+            const stopBtn = document.getElementById('stop-btn');
+            const volumeSlider = document.getElementById('volume-slider');
+            const statusDisplay = document.getElementById('status-display');
+            const stations = {
+                aljazeera: { name: 'راديو الجزيرة', url: 'https://live-hls-audio-web-aja.getaj.net/VOICE-AJA/index.m3u8', isHls: true },
+                quran: { name: 'إذاعة القرآن الكريم من القاهرة', url: 'https://stream.radiojar.com/8s5u5tpdtwzuv', isHls: false }
+            };
+            let hls = null, currentStation = null;
+            function stopPlayback() {
+                audioPlayer.pause();
+                audioPlayer.src = ''; 
+                if (hls) { hls.destroy(); hls = null; }
+                statusDisplay.textContent = "تم الإيقاف";
+                aljazeeraBtn.classList.remove('active');
+                quranBtn.classList.remove('active');
+                currentStation = null;
+            }
+            function playStation(stationKey) {
+                if (currentStation === stationKey) return; 
+                stopPlayback(); 
+                currentStation = stationKey;
+                const station = stations[stationKey];
+                statusDisplay.textContent = `...جاري الاتصال بـ ${station.name}`;
+                aljazeeraBtn.classList.toggle('active', stationKey === 'aljazeera');
+                quranBtn.classList.toggle('active', stationKey === 'quran');
+                if (station.isHls) {
+                    if (Hls.isSupported()) {
+                        hls = new Hls();
+                        hls.loadSource(station.url);
+                        hls.attachMedia(audioPlayer);
+                        hls.on(Hls.Events.MANIFEST_PARSED, () => audioPlayer.play().catch(e => console.error("Play error:", e)));
+                        hls.on(Hls.Events.ERROR, (event, data) => {
+                            if (data.fatal) {
+                                console.error('HLS error:', data);
+                                statusDisplay.textContent = "خطأ في بث الجزيرة";
+                                stopPlayback();
+                            }
+                        });
+                    } else { statusDisplay.textContent = "المتصفح لا يدعم هذا البث"; }
+                } else { 
+                    audioPlayer.src = station.url;
+                    audioPlayer.load();
+                    audioPlayer.play().catch(e => console.error("Play error:", e));
+                }
+            }
+            aljazeeraBtn.addEventListener('click', () => playStation('aljazeera'));
+            quranBtn.addEventListener('click', () => playStation('quran'));
+            stopBtn.addEventListener('click', stopPlayback);
+            volumeSlider.addEventListener('input', (e) => audioPlayer.volume = e.target.value);
+            audioPlayer.addEventListener('playing', () => { if(currentStation) statusDisplay.textContent = `جاري الاستماع: ${stations[currentStation].name}`; });
+            audioPlayer.addEventListener('error', () => { if(currentStation) { statusDisplay.textContent = `خطأ في بث ${stations[currentStation].name}`; stopPlayback(); } });
+            audioPlayer.volume = volumeSlider.value;
+        });
+    </script>
+</body>
+</html>
