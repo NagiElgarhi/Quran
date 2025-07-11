@@ -4,20 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Radio Nagiz</title>
-    
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kufam:wght@400;700&family=Uncial+Antiqua&display=swap" rel="stylesheet">
-    
-    <!-- HLS.js Library -->
+
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
-    <!-- === CSS Code === -->
     <style>
+        /* @font-face rule to load the Ringbearer font */
+        @font-face {
+            font-family: 'Ringbearer';
+            src: url('Ringbearer.ttf') format('truetype'); /* Adjust path and format if needed */
+            font-weight: normal;
+            font-style: normal;
+        }
+
         body {
             background-color: #3d3732;
-            font-family: 'Kufam', sans-serif;
+            font-family: 'Ringbearer', sans-serif;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -26,26 +27,36 @@
             margin: 0;
             padding: 20px;
         }
-        .radio-container { text-align: center; }
+
+        .radio-container {
+            text-align: center;
+            width: 80%;
+            max-width: 900px;
+        }
 
         /* --- Gradient Text Styling for most text --- */
-        h1, .station-btn, #status-display, label, footer p, #stop-btn {
+        h1, .station-btn, #status-display, label, #stop-btn, .radio-internal-footer p {
             background: linear-gradient(45deg, #FFD700, #F39C12, #BF5700);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
             color: #FFD700; /* Fallback */
+            font-family: 'Ringbearer', sans-serif;
         }
 
         /* --- Title Styling --- */
         h1 {
-            font-family: 'Uncial Antiqua', cursive;
             font-weight: normal;
             font-size: 3.5rem;
             text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
             margin-bottom: 25px;
             line-height: 1;
+            text-align: center;
+            width: 100%;
+            margin-top: 0;
+            padding-top: 15px;
         }
+
         .large-z {
             font-size: 200%;
             display: inline-block;
@@ -55,116 +66,274 @@
 
         /* --- The NEW Turquoise 'Z' Styling --- */
         .turquoise-z {
-            color: #40E0D0; /* Turquoise color */
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.6); /* Give it its own shadow to pop */
-            /* Override the parent's gradient effect */
+            color: #40E0D0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
             background: none;
             -webkit-background-clip: initial;
             background-clip: initial;
-            -webkit-text-fill-color: initial; /* This is key to let the color show */
+            -webkit-text-fill-color: initial;
+            font-family: 'Ringbearer', sans-serif;
         }
-        
+
         .radio-body {
-            width: 500px; max-width: 95vw;
+            width: 100%;
+            max-width: 95vw;
             background: linear-gradient(145deg, #8c5a2b, #593a1a);
-            border: 5px solid #4a2f1a; border-radius: 20px;
+            border: 5px solid #4a2f1a;
+            border-radius: 20px;
             padding: 25px;
             box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
+
         .top-panel {
-            background-color: #4a2f1a; border-radius: 10px;
-            padding: 20px; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+            background-color: #4a2f1a;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
             margin-bottom: 25px;
+            width: 100%;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
         }
-        .station-selectors { display: flex; justify-content: center; gap: 30px; }
+
+        .station-selectors {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            width: 100%;
+            box-sizing: border-box;
+            flex-wrap: wrap;
+        }
+
         .station-btn {
-            background-color: #f0e6d2; border: 4px solid #593a1a;
-            border-radius: 50%; width: 100px; height: 100px;
-            font-size: 1.1rem; font-family: 'Kufam', sans-serif;
-            font-weight: bold; cursor: pointer;
-            transition: all 0.2s ease; box-shadow: 2px 2px 8px rgba(0,0,0,0.6);
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            text-align: center; line-height: 1.2;
+            background-color: #f0e6d2;
+            border: 4px solid #593a1a;
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.6);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            line-height: 1.2;
+            margin: 0 15px;
         }
-        .station-btn:hover { background-color: #fff; transform: translateY(-2px); }
+
+        .station-btn:hover {
+            background-color: #fff;
+            transform: translateY(-2px);
+        }
+
         .station-btn.active {
-            background-color: #f0e6d2; border-color: #f39c12;
+            background-color: #f0e6d2;
+            border-color: #f39c12;
             box-shadow: 0 0 15px #f39c12, inset 0 0 10px rgba(0,0,0,0.4);
         }
+
         #status-display {
-            margin-top: 15px; font-size: 1rem;
-            font-weight: bold; height: 20px;
+            font-size: 40px;
+            font-weight: bold;
+            height: auto;
+            text-align: center;
+            width: auto;
+            margin: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
+
         .controls {
-            display: flex; justify-content: space-around;
-            align-items: center; background-color: #4a2f1a;
-            padding: 15px; border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #4a2f1a;
+            padding: 15px;
+            border-radius: 10px;
             box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 15px;
         }
+
+        /* Styles for the stone dots container */
+        .stone-dots {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            max-width: 400px;
+            margin: 0 20px;
+        }
+
+        .stone-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            box-shadow: inset 1px 1px 3px rgba(0,0,0,0.4);
+        }
+        /* Custom stone colors for 25 unique dots */
+        .stone-dot:nth-child(1) { background-color: #8B4513; } /* SaddleBrown */
+        .stone-dot:nth-child(2) { background-color: #A0522D; } /* Sienna */
+        .stone-dot:nth-child(3) { background-color: #D2B48C; } /* Tan */
+        .stone-dot:nth-child(4) { background-color: #CD853F; } /* Peru */
+        .stone-dot:nth-child(5) { background-color: #BC8F8F; } /* RosyBrown */
+        .stone-dot:nth-child(6) { background-color: #6B8E23; } /* OliveDrab */
+        .stone-dot:nth-child(7) { background-color: #BDB76B; } /* DarkKhaki */
+        .stone-dot:nth-child(8) { background-color: #A9A9A9; } /* DarkGray */
+        .stone-dot:nth-child(9) { background-color: #708090; } /* SlateGray */
+        .stone-dot:nth-child(10) { background-color: #556B2F; } /* DarkOliveGreen */
+        .stone-dot:nth-child(11) { background-color: #808000; } /* Olive */
+        .stone-dot:nth-child(12) { background-color: #8FBC8F; } /* DarkSeaGreen */
+        .stone-dot:nth-child(13) { background-color: #B0C4DE; } /* LightSteelBlue */
+        .stone-dot:nth-child(14) { background-color: #6A5ACD; } /* SlateBlue */
+        .stone-dot:nth-child(15) { background-color: #696969; } /* DimGray */
+        .stone-dot:nth-child(16) { background-color: #DDA0DD; } /* Plum */
+        .stone-dot:nth-child(17) { background-color: #9370DB; } /* MediumPurple */
+        .stone-dot:nth-child(18) { background-color: #B8860B; } /* DarkGoldenrod */
+        .stone-dot:nth-child(19) { background-color: #DAA520; } /* Goldenrod */
+        .stone-dot:nth-child(20) { background-color: #CD5C5C; } /* IndianRed */
+        .stone-dot:nth-child(21) { background-color: #FF6347; } /* Tomato */
+        .stone-dot:nth-child(22) { background-color: #F4A460; } /* SandyBrown */
+        .stone-dot:nth-child(23) { background-color: #DEB887; } /* BurlyWood */
+        .stone-dot:nth-child(24) { background-color: #D2691E; } /* Chocolate */
+        .stone-dot:nth-child(25) { background-color: #C0C0C0; } /* Silver */
+
         #stop-btn {
-            background-color: #c0392b; border: 2px solid #552211;
-            border-radius: 8px; padding: 10px 20px;
-            font-size: 1rem; font-family: 'Kufam', sans-serif;
-            font-weight: bold; cursor: pointer;
+            background-color: #c0392b;
+            border: 2px solid #552211;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
             transition: background-color 0.2s;
         }
-        #stop-btn:hover { background-color: #e74c3c; }
-        .control-group { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-        label { font-size: 1rem; font-weight: bold;}
+
+        #stop-btn:hover {
+            background-color: #e74c3c;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        label {
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
         .classic-slider {
-            -webkit-appearance: none; appearance: none;
-            width: 180px; height: 10px;
-            background: #c8b496; border-radius: 5px;
+            -webkit-appearance: none;
+            appearance: none;
+            width: 180px;
+            height: 10px;
+            background: #c8b496;
+            border-radius: 5px;
             outline: none;
         }
+
         .classic-slider::-webkit-slider-thumb {
-            -webkit-appearance: none; appearance: none;
-            width: 25px; height: 25px;
-            background: #f0e6d2; border-radius: 50%;
-            border: 2px solid #593a1a; cursor: pointer;
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            background: #f0e6d2;
+            border-radius: 50%;
+            border: 2px solid #593a1a;
+            cursor: pointer;
         }
-        
-        /* --- Footer Styling --- */
-        footer { margin-top: 40px; text-align: center; font-size: 18px; }
-        footer p { margin: 5px 0; font-weight: bold; }
-        .footer-brand { font-family: 'Uncial Antiqua', cursive; font-size: 1.3em; letter-spacing: 2px; }
-        .temple-icon { font-size: 1.1em; vertical-align: -0.1em; margin-left: 8px; }
+
+        /* --- Internal Footer Styling for content moved inside radio-body --- */
+        .radio-internal-footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 18px; /* Default size for the container */
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            align-items: center;
+            padding: 0 10px;
+            box-sizing: border-box;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .radio-internal-footer p {
+            margin: 0;
+            font-weight: bold;
+            background: linear-gradient(45deg, #FFD700, #F39C12, #BF5700);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: #FFD700; /* Fallback */
+            font-family: 'Ringbearer', sans-serif;
+            font-size: 24px; /* Changed font size to 24px for footer paragraphs */
+        }
+
+        .footer-brand {
+            font-size: 1.3em; /* This will now be 1.3 times 24px */
+            letter-spacing: 2px;
+        }
+
+        .temple-icon {
+            font-size: 1.1em;
+            vertical-align: -0.1em;
+            margin-left: 8px;
+        }
     </style>
 </head>
 <body>
-
     <div class="radio-container">
-        <!-- Title with Turquoise Z -->
-        <h1>Radio Nagi<span class="large-z turquoise-z">z</span></h1>
-        
         <div class="radio-body">
+            <h1><span class="app-title-font">Radio Nagi</span><span class="large-z turquoise-z">z</span></h1>
+
             <div class="top-panel" dir="rtl">
                 <div class="station-selectors">
                     <button id="aljazeera-btn" class="station-btn">راديو<br>الجزيرة</button>
+                    <div id="status-display">اختر محطة للبدء</div>
                     <button id="quran-btn" class="station-btn">القرآن الكريم<br>(القاهرة)</button>
                 </div>
-                <div id="status-display">اختر محطة للبدء</div>
             </div>
             <div class="controls" dir="rtl">
-                <button id="stop-btn">إيقاف</button>
                 <div class="control-group">
                     <label for="volume-slider">الصوت</label>
                     <input type="range" id="volume-slider" class="classic-slider" min="0" max="1" step="0.01" value="0.8">
                 </div>
+                <div class="stone-dots">
+                    <div class="stone-dot"></div><div class="stone-dot"></div><div class="stone-dot"></div><div class="stone-dot"></div><div class="stone-dot"></div>
+                    <div class="stone-dot"></div><div class="stone-dot"></div><div class="stone-dot"></div><div class="stone-dot"></div><div class="stone-dot"></div>
+                    <div class="stone-dot"></div><div class="stone-dot"></div><div class="stone-dot"></div><div class="stone-dot"></div><div class="stone-dot"></div>
+                    <div class="stone-dot"></div><div class="stone-dot"></div><div class="stone-dot"></div><div class="stone-dot"></div><div class="stone-dot"></div>
+                    <div class="stone-dot"></div><div class="stone-dot"></div><div class="stone-dot"></div><div class="stone-dot"></div><div class="stone-dot"></div>
+                </div>
+                <button id="stop-btn">إيقاف</button>
+            </div>
+
+            <div class="radio-internal-footer">
+                <p><span class="app-title-font">Nagi</span><span class="turquoise-z">z</span> Smart Solution<span class="temple-icon">🏛️</span></p>
+                <p class="footer-brand">Nss - 2025 &copy;</p>
             </div>
         </div>
     </div>
-    
-    <!-- Footer with Turquoise Z -->
-    <footer>
-        <p>Nagi<span class="turquoise-z">z</span> Smart Solution<span class="temple-icon">🏛️</span></p>
-        <p class="footer-brand">Nss - 2025 &copy;</p>
-    </footer>
 
     <audio id="audio-player" style="display:none;"></audio>
 
-    <!-- === JavaScript Code (No changes needed) === -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const audioPlayer = document.getElementById('audio-player');
@@ -178,23 +347,32 @@
                 quran: { name: 'إذاعة القرآن الكريم من القاهرة', url: 'https://stream.radiojar.com/8s5u5tpdtwzuv', isHls: false }
             };
             let hls = null, currentStation = null;
+
             function stopPlayback() {
                 audioPlayer.pause();
-                audioPlayer.src = ''; 
-                if (hls) { hls.destroy(); hls = null; }
+                audioPlayer.src = '';
+                if (hls) {
+                    hls.destroy();
+                    hls = null;
+                }
                 statusDisplay.textContent = "تم الإيقاف";
                 aljazeeraBtn.classList.remove('active');
                 quranBtn.classList.remove('active');
                 currentStation = null;
             }
+
             function playStation(stationKey) {
-                if (currentStation === stationKey) return; 
-                stopPlayback(); 
+                if (currentStation === stationKey) return;
+
+                stopPlayback();
+
                 currentStation = stationKey;
                 const station = stations[stationKey];
                 statusDisplay.textContent = `...جاري الاتصال بـ ${station.name}`;
+
                 aljazeeraBtn.classList.toggle('active', stationKey === 'aljazeera');
                 quranBtn.classList.toggle('active', stationKey === 'quran');
+
                 if (station.isHls) {
                     if (Hls.isSupported()) {
                         hls = new Hls();
@@ -208,19 +386,31 @@
                                 stopPlayback();
                             }
                         });
-                    } else { statusDisplay.textContent = "المتصفح لا يدعم هذا البث"; }
-                } else { 
+                    } else {
+                        statusDisplay.textContent = "المتصفح لا يدعم هذا البث";
+                    }
+                } else {
                     audioPlayer.src = station.url;
                     audioPlayer.load();
                     audioPlayer.play().catch(e => console.error("Play error:", e));
                 }
             }
+
             aljazeeraBtn.addEventListener('click', () => playStation('aljazeera'));
             quranBtn.addEventListener('click', () => playStation('quran'));
             stopBtn.addEventListener('click', stopPlayback);
             volumeSlider.addEventListener('input', (e) => audioPlayer.volume = e.target.value);
-            audioPlayer.addEventListener('playing', () => { if(currentStation) statusDisplay.textContent = `جاري الاستماع: ${stations[currentStation].name}`; });
-            audioPlayer.addEventListener('error', () => { if(currentStation) { statusDisplay.textContent = `خطأ في بث ${stations[currentStation].name}`; stopPlayback(); } });
+
+            audioPlayer.addEventListener('playing', () => {
+                if (currentStation) statusDisplay.textContent = `جاري الاستماع: ${stations[currentStation].name}`;
+            });
+            audioPlayer.addEventListener('error', () => {
+                if (currentStation) {
+                    statusDisplay.textContent = `خطأ في بث ${stations[currentStation].name}`;
+                    stopPlayback();
+                }
+            });
+
             audioPlayer.volume = volumeSlider.value;
         });
     </script>
