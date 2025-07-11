@@ -47,7 +47,7 @@
         /* --- Title Styling --- */
         h1 {
             font-weight: normal;
-            font-size: 3.5rem;
+            font-size: 4.2rem; /* Increased by 20% from 3.5rem (3.5 * 1.2 = 4.2) */
             text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
             margin-bottom: 25px;
             line-height: 1;
@@ -64,14 +64,13 @@
             margin: 0 -0.1em;
         }
 
-        /* --- The NEW Turquoise 'Z' Styling --- */
+        /* --- Changed: Z color gradient --- */
         .turquoise-z {
-            color: #40E0D0;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
-            background: none;
-            -webkit-background-clip: initial;
-            background-clip: initial;
-            -webkit-text-fill-color: initial;
+            background: linear-gradient(45deg, #FF8C00, #FFA500, #FFD700); /* Orange to Yellow gradient */
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: #FFA500; /* Fallback for older browsers */
             font-family: 'Ringbearer', sans-serif;
         }
 
@@ -287,7 +286,8 @@
         }
 
         .footer-brand {
-            font-size: 1.3em; /* This will now be 1.3 times 24px */
+            /* This will now be 1.3 times the 24px base font size, or you can set a fixed value */
+            font-size: 1.3em;
             letter-spacing: 2px;
         }
 
@@ -343,8 +343,8 @@
             const volumeSlider = document.getElementById('volume-slider');
             const statusDisplay = document.getElementById('status-display');
             const stations = {
-                aljazeera: { name: 'راديو الجزيرة', url: 'https://live-hls-audio-web-aja.getaj.net/VOICE-AJA/index.m3u8', isHls: true },
-                quran: { name: 'إذاعة القرآن الكريم من القاهرة', url: 'https://stream.radiojar.com/8s5u5tpdtwzuv', isHls: false }
+                aljazeera: { name: 'الجزيرة', url: 'https://live-hls-audio-web-aja.getaj.net/VOICE-AJA/index.m3u8', isHls: true },
+                quran: { name: 'القرآن الكريم (القاهرة)', url: 'https://stream.radiojar.com/8s5u5tpdtwzuv', isHls: false }
             };
             let hls = null, currentStation = null;
 
@@ -368,7 +368,8 @@
 
                 currentStation = stationKey;
                 const station = stations[stationKey];
-                statusDisplay.textContent = `...جاري الاتصال بـ ${station.name}`;
+                // Removed "جاري الاستماع:" prefix
+                statusDisplay.textContent = station.name;
 
                 aljazeeraBtn.classList.toggle('active', stationKey === 'aljazeera');
                 quranBtn.classList.toggle('active', stationKey === 'quran');
@@ -402,7 +403,7 @@
             volumeSlider.addEventListener('input', (e) => audioPlayer.volume = e.target.value);
 
             audioPlayer.addEventListener('playing', () => {
-                if (currentStation) statusDisplay.textContent = `جاري الاستماع: ${stations[currentStation].name}`;
+                if (currentStation) statusDisplay.textContent = stations[currentStation].name; // Removed "جاري الاستماع:"
             });
             audioPlayer.addEventListener('error', () => {
                 if (currentStation) {
